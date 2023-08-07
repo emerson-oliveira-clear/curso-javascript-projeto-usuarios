@@ -1,69 +1,99 @@
 class UserController {
 
-constructor(formId, tableId){
+    constructor(formId, tableId) {
 
-    this.formEl = document.getElementById(formId);
-    this.tableEl = document.getElementById(tableId);
+        this.formEl = document.getElementById(formId);
+        this.tableEl = document.getElementById(tableId);
 
-    this.   onSubmit();
+        this.onSubmit();
 
-}
+    }
 
-onSubmit(){
+    onSubmit() {
 
-    this.formEl.addEventListener("submit", event => {
+        this.formEl.addEventListener("submit", event => {
 
-        event.preventDefault();
-    
-        let user = this.getValues();
+            event.preventDefault();
 
-        this.addLine(user,"");
+            let values = this.getValues();
 
-    })
-    
-}
+            this.getPhoto((content) => {
+
+                values.photo = content;
+
+                this.addLine(values);
+
+            });
 
 
-getValues(){
+        });
 
-    let user = {};
+    }
+    getPhoto(callback) {
 
-    this.formEl.elements.forEach(function (field, index) {
+        let fileReader = new FileReader();
 
-        if (field.name == "gender") {
+        let elements = [...this.formEl.elements].filter(item => {
 
-            if (field.checked) {
+            if (item.name === 'photo') {
+                return item;
+            }
 
-                user.gender
+        });
+
+        let file = elements[0].files[0];
+
+        fileReader.onload = () => {
+
+            
+            callback(fileReader.result);
+
+        };
+
+        fileReader.readAsDataURL(file); 
+
+    }
+
+    getValues() {
+
+        let user = {};
+
+        [...this.formEl.elements].forEach(function (field, index) {
+
+            if (field.name == "gender") {
+
+                if (field.checked) {
+
+                    user.gender
+
+                }
+
+            } else {
+
+                user[field.name] = field.value;
 
             }
 
-        } else {
+        });
 
-            user[field.name] = field.value;
+        return new User(
+            user.name,
+            user.gender,
+            user.birth,
+            user.country,
+            user.email,
+            user.password,
+            user.photo,
+            user.admin
+        );
 
-        }
+    }
 
-    });
+    addLine(dataUser) {
 
-    return new User(
-        user.name, 
-        user.gender, 
-        user.birth, 
-        user.country, 
-        user.email, 
-        user.password, 
-        user.photo, 
-        user.admin
-    );
-
-}
-
-addLine(dataUser) {
-
-    this.tableEl.innerHTML = `
+        this.tableEl.innerHTML = `
         <tr>
-            <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
+            <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
             <td>${dataUser.name}</td>
             <td>${dataUser.email}</td>
             <td>${dataUser.admin}</td>
@@ -76,6 +106,6 @@ addLine(dataUser) {
     `;
 
 
-}
+    }
 
 }
