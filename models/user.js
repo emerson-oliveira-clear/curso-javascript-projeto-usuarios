@@ -10,9 +10,15 @@ class User {
         this._password = password;
         this._photo = photo;
         this._admin = admin;
+        this._register = new Date();
 
     }
 
+    get register(){
+
+        return this._register;
+
+    }
     get name(){
 
         return this._name;
@@ -53,5 +59,11 @@ class User {
         return this._admin;
 
     }
+
+    set photo(value){
+
+        this._photo = value;
+    }
+
 
 }
