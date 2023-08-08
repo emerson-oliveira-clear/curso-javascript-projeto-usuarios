@@ -51,7 +51,7 @@ class User {
     }
     get photo(){
 
-        return this._photo;
+        return this._photo; 
 
     }
     get admin(){
